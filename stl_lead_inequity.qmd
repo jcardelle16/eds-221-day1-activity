@@ -1,0 +1,57 @@
+---
+title: "St Louis Lead Inequity"
+author: "Josephine Cardelle"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# attaching libraries
+library(tidyverse)
+library(janitor)
+```
+
+```{r}
+# read in data
+stl_lead <- read_csv(here::here("data", "stl_blood_lead.csv"))
+
+# clean names
+stl_lead <- stl_lead %>% clean_names()
+
+# data exploration
+skimr::skim(stl_lead)
+
+dim(stl_lead)
+names(stl_lead)
+```
+
+```{r}
+# make new data frame and add a column
+stl_lead_prop <- read_csv(here::here("data", "stl_blood_lead.csv")) |> 
+  dplyr::mutate(prop_white = white / totalPop * 100)
+```
+
+```{r}
+# create a scatterplot
+stl_lead_plot <- ggplot(stl_lead_prop, 
+       aes(x = pctElevated, 
+           y = prop_white)) +
+  geom_point(aes(color = prop_white)) +
+  scale_color_gradient(low = "orange", 
+                       high = "blue")
+
+stl_lead_plot
+
+# the overall trend from the grap shows that as the percent identifying as white decreases, the elevated blood lead levels increases
+```
+
+```{r}
+# Create a histogram
+stl_elecvatedpct_histo <- ggplot(stl_lead_prop, aes(x = pctElevated)) +
+  geom_histogram(color = "dark green", fill = "orange", linetype = "dashed")
+
+stl_elecvatedpct_histo
+```
+
